@@ -7,6 +7,8 @@ import java.util.ArrayList;
 
 public class DualityGUI implements Gui {
 
+
+
     private DFrame dFrame;
 
     public DualityGUI() {
@@ -21,7 +23,7 @@ public class DualityGUI implements Gui {
 
     @Override
     public void setFullScreen(boolean fullScreen) {
-
+        dFrame.setFullScreen(fullScreen);
     }
 
     @Override
@@ -76,16 +78,6 @@ public class DualityGUI implements Gui {
 
     @Override
     public void redraw() {
-
-    }
-
-    @Override
-    public void redraw(int zone) {
-
-    }
-
-    @Override
-    public void redraw(int zone, int row, int col) {
 
     }
 }
