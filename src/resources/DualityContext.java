@@ -27,7 +27,7 @@ public class DualityContext extends RenderContext {
                 return new Dimension(BASE_TEXT_WIDTH, BASE_TILE_SIZE);
             case 3:
                 return new Dimension(BASE_TEXT_WIDTH / 2, BASE_TILE_SIZE / 2);
-                default: throw new IllegalStateException("Unhandled DualityContext ID: " + ID);
+            default: throw new IllegalStateException("Unhandled DualityContext ID: " + ID);
         }
     }
 
