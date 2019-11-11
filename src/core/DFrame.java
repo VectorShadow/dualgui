@@ -1,6 +1,6 @@
 package core;
 
-import resources.DynamicSize;
+import resources.DualityContext;
 import resources.Glyph;
 import resources.Renderer;
 
@@ -14,15 +14,20 @@ public class DFrame extends JFrame {
 
     public DFrame() {
         setFullScreen(false);
-        glyphMap = new Glyph[DynamicSize.countTileRows()][DynamicSize.countTileColumns()];
+        glyphMap = new Glyph[
+                        Renderer.countUnits(DualityContext.TILE_FULLSCREEN).height
+                ][
+                        Renderer.countUnits(DualityContext.TILE_FULLSCREEN).width
+                ];
         imagePane = new ImagePane();
         //todo - lots here
     }
 
     public void setFullScreen(boolean fs) {
         fullScreen = fs;
-        Renderer.initialize(fullScreen);
         //todo - resize the display
     }
-
+    public boolean isFullScreen() {
+        return fullScreen;
+    }
 }
