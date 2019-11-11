@@ -1,33 +1,78 @@
 package core;
 
 import contract.Gui;
+import resources.DualityContext;
 import resources.Glyph;
 import resources.OutputMode;
+import resources.Renderer;
 import resources.Zone;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 public class DualityGUI implements Gui {
 
+    private boolean fullScreen;
+
     private ArrayList<Zone> zones;
     private ArrayList<Zone> visibleZones;
 
-    private DFrame dFrame;
+    private JFrame frame;
+    private ImagePane imagePane;
+
+    private Glyph[][] glyphMap;
 
     public DualityGUI() {
+        fullScreen = false;
         zones = new ArrayList<>();
-        dFrame = new DFrame();
+        visibleZones = new ArrayList<>();
+        glyphMap = new Glyph[
+                resources.Renderer.countUnits(DualityContext.TILE_FULLSCREEN).height
+                ][
+                Renderer.countUnits(DualityContext.TILE_FULLSCREEN).width
+                ];
+        deriveSizes();
+    }
+
+    public boolean isFullScreen() {
+        return fullScreen;
+    }
+    private Point centeredOrigin() {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        return new Point(
+                ((int)(screenSize.getWidth() - frame.getWidth())) / 2,
+                ((int)(screenSize.getHeight() - frame.getHeight())) / 2
+                );
+    }
+    public void deriveSizes() {
+        frame = new JFrame();
+        imagePane = new ImagePane(fullScreen);
+        imagePane.setImage(new BufferedImage(imagePane.getWidth(), imagePane.getHeight(), BufferedImage.TYPE_INT_ARGB));
+        frame.setContentPane(imagePane);
+        frame.setUndecorated(fullScreen);
+        frame.setVisible(true);
+        frame.pack();
+        if (fullScreen) {
+            frame.setExtendedState(Frame.MAXIMIZED_BOTH);
+        } else {
+            frame.setExtendedState(Frame.NORMAL);
+            frame.setLocation(centeredOrigin());
+        }
     }
 
     @Override
     public void close() {
         //todo - other cleanup here
-        dFrame.dispose();
+        frame.dispose();
     }
 
     @Override
-    public void setFullScreen(boolean fullScreen) {
-        dFrame.setFullScreen(fullScreen);
+    public void setFullScreen(boolean fs) {
+        if (fullScreen == fs) return;
+        fullScreen = fs;
+        deriveSizes();
     }
 
     @Override
