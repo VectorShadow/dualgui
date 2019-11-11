@@ -58,12 +58,12 @@ public class DualityGUI implements Gui {
 
     @Override
     public void print(int row, int col, Glyph g) {
-
+        //todo: treat this as the whole screen, and orient it to the center - other zones fill in around
     }
 
     @Override
     public void print(int row, int col, ArrayList<Glyph> g) {
-
+        //do nothing here?
     }
 
     @Override
@@ -78,6 +78,6 @@ public class DualityGUI implements Gui {
 
     @Override
     public void redraw() {
-
+        //todo: draw background as tiles
     }
 }
