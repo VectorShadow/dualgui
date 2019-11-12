@@ -35,9 +35,20 @@ public class DualityContext extends RenderContext {
     public Font imageFont() { //todo - these need to be adjusted!
         switch (ID) {
             case 0: case 1:
-                return new Font(Font.DIALOG, Font.PLAIN, Renderer.countUnits(this).height - 2);
+                return new Font(Font.DIALOG, Font.PLAIN, Renderer.countUnits(outputMode()).height - 2);
             case 2: case 3:
-                return new Font(Font.SANS_SERIF, Font.PLAIN, Renderer.countUnits(this).height - 2);
+                return new Font(Font.SANS_SERIF, Font.PLAIN, Renderer.countUnits(outputMode()).height - 2);
+            default: throw new IllegalStateException("Unhandled DualityContext ID: " + ID);
+        }
+    }
+
+    @Override
+    public OutputMode outputMode() {
+        switch (ID) {
+            case 0: case 1:
+                return DualityMode.TILE;
+            case 2: case 3:
+                return DualityMode.TEXT;
             default: throw new IllegalStateException("Unhandled DualityContext ID: " + ID);
         }
     }

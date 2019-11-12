@@ -1,11 +1,8 @@
 package core;
 
 import contract.Gui;
-import resources.DualityContext;
-import resources.Glyph;
-import resources.OutputMode;
+import resources.*;
 import resources.Renderer;
-import resources.Zone;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,23 +13,26 @@ public class DualityGUI implements Gui {
 
     private boolean fullScreen;
 
+    private Zone mainZone;
+
     private ArrayList<Zone> zones;
     private ArrayList<Zone> visibleZones;
 
     private JFrame frame;
     private ImagePane imagePane;
-
-    private Glyph[][] glyphMap;
+    private BufferedImage bufferedImage;
 
     public DualityGUI() {
-        fullScreen = false;
+        fullScreen = true;
+        mainZone = new Zone(
+                0,
+                0,
+                Renderer.countPixels().height,
+                Renderer.countPixels().width,
+                DualityMode.TILE
+        );
         zones = new ArrayList<>();
         visibleZones = new ArrayList<>();
-        glyphMap = new Glyph[
-                resources.Renderer.countUnits(DualityContext.TILE_FULLSCREEN).height
-                ][
-                Renderer.countUnits(DualityContext.TILE_FULLSCREEN).width
-                ];
         deriveSizes();
     }
 
@@ -49,7 +49,8 @@ public class DualityGUI implements Gui {
     public void deriveSizes() {
         frame = new JFrame();
         imagePane = new ImagePane(fullScreen);
-        imagePane.setImage(new BufferedImage(imagePane.getWidth(), imagePane.getHeight(), BufferedImage.TYPE_INT_ARGB));
+        initializeBufferedImage();
+        imagePane.setImage(bufferedImage);
         frame.setContentPane(imagePane);
         frame.setUndecorated(fullScreen);
         frame.setVisible(true);
@@ -130,5 +131,15 @@ public class DualityGUI implements Gui {
     @Override
     public void redraw() {
         //todo: draw background as tiles
+        bufferedImage = mainZone.draw(fullScreen);
+        for (Zone z : zones) {
+            //todo - draw all other zones on top of this image
+        }
+        imagePane.setImage(bufferedImage);
+        imagePane.repaint();
+        initializeBufferedImage();
+    }
+    private void initializeBufferedImage(){
+        bufferedImage = new BufferedImage(imagePane.getWidth(), imagePane.getHeight(), BufferedImage.TYPE_INT_ARGB);
     }
 }
