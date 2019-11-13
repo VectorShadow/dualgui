@@ -121,7 +121,7 @@ public class DualityGUI implements Gui {
 
     @Override
     public void print(int row, int col, ArrayList<Glyph> g) {
-        //do nothing here?
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -131,7 +131,7 @@ public class DualityGUI implements Gui {
 
     @Override
     public void print(int zone, int row, int col, ArrayList<Glyph> g) {
-        //todo - stub
+        zones.get(zone).print(row, col, g);
     }
 
     @Override

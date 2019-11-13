@@ -14,4 +14,15 @@ public enum DualityMode implements OutputMode {
             default: throw new IllegalStateException("Unhandled DualityMode: " + this);
         }
     }
+
+    @Override
+    public GlyphStringProtocol getGlyphStringProtocol() {
+        switch (this) {
+            case TEXT:
+                return new GlyphStringProtocol(1, 127, 2, 4);
+            case TILE:
+                return new GlyphStringProtocol(0, 1, 1, -1);
+            default: throw new IllegalStateException("Unhandled DualityMode: " + this);
+        }
+    }
 }
