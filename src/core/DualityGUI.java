@@ -25,10 +25,10 @@ public class DualityGUI implements Gui {
     public DualityGUI() {
         fullScreen = true;
         mainZone = new Zone(
-                0,
-                0,
-                Renderer.countPixels().height,
-                Renderer.countPixels().width,
+                0.0,
+                1.0,
+                0.0,
+                1.0,
                 DualityMode.TILE
         );
         zones = new ArrayList<>();
@@ -77,8 +77,13 @@ public class DualityGUI implements Gui {
     }
 
     @Override
-    public void addZone(int rowOrigin, int colOrigin, int numRows, int numCols, OutputMode om) {
-        Zone z = new Zone(rowOrigin, colOrigin, numRows, numCols, om);
+    public void addZone(
+            double verticalOriginPct,
+            double verticalSizePct,
+            double horizontalOriginPct,
+            double horizontalSizePct,
+            OutputMode om) {
+        Zone z = new Zone(verticalOriginPct, verticalSizePct, horizontalOriginPct, horizontalSizePct, om);
         zones.add(z);
         visibleZones.add(z);
     }
@@ -100,17 +105,18 @@ public class DualityGUI implements Gui {
 
     @Override
     public void clear() {
-        //todo - stub
+        mainZone.clear();
+        for (Zone z : zones) z.clear();
     }
 
     @Override
     public void clear(int zone) {
-        //todo - stub
+        zones.get(zone).clear();
     }
 
     @Override
     public void print(int row, int col, Glyph g) {
-        //todo: treat this as the whole screen, and orient it to the center - other zones fill in around
+        mainZone.print(row, col, g);
     }
 
     @Override
@@ -120,7 +126,7 @@ public class DualityGUI implements Gui {
 
     @Override
     public void print(int zone, int row, int col, Glyph g) {
-        //todo - stub
+        zones.get(zone).print(row, col, g);
     }
 
     @Override
@@ -133,7 +139,7 @@ public class DualityGUI implements Gui {
         //todo: draw background as tiles
         mainZone.draw(fullScreen, bufferedImage);
         for (Zone z : zones) {
-            //todo - draw all other zones on top of this image
+            z.draw(fullScreen, bufferedImage);
         }
         imagePane.setImage(bufferedImage);
         imagePane.repaint();

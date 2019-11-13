@@ -32,12 +32,16 @@ public class DualityContext extends RenderContext {
     }
 
     @Override
-    public Font imageFont() { //todo - these need to be adjusted!
+    public Font imageFont() {
         switch (ID) {
-            case 0: case 1:
-                return new Font(Font.DIALOG, Font.PLAIN, Renderer.countUnits(outputMode()).height - 2);
-            case 2: case 3:
-                return new Font(Font.SANS_SERIF, Font.PLAIN, Renderer.countUnits(outputMode()).height - 2);
+            case 0:
+                return new Font(Font.DIALOG, Font.PLAIN, (int)((double)Renderer.countUnits(outputMode()).height * 0.75));
+            case 1:
+                return new Font(Font.DIALOG, Font.PLAIN, (int)((double)Renderer.countUnits(outputMode()).height * 0.375));
+            case 2:
+                return new Font(Font.MONOSPACED, Font.PLAIN, (int)((double)Renderer.countUnits(outputMode()).height * 0.75));
+            case 3:
+                return new Font(Font.MONOSPACED, Font.PLAIN, (int)((double)Renderer.countUnits(outputMode()).height * 0.375));
             default: throw new IllegalStateException("Unhandled DualityContext ID: " + ID);
         }
     }
