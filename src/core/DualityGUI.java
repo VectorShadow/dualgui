@@ -131,7 +131,7 @@ public class DualityGUI implements Gui {
     @Override
     public void redraw() {
         //todo: draw background as tiles
-        bufferedImage = mainZone.draw(fullScreen);
+        mainZone.draw(fullScreen, bufferedImage);
         for (Zone z : zones) {
             //todo - draw all other zones on top of this image
         }
