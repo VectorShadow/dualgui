@@ -2,7 +2,6 @@ package core;
 
 import contract.Gui;
 import resources.*;
-import resources.Renderer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -104,6 +103,16 @@ public class DualityGUI implements Gui {
     }
 
     @Override
+    public void setBackground(int zoneID, Glyph g) {
+        zones.get(zoneID).setBackground(g);
+    }
+
+    @Override
+    public void setBorder(int zoneID, Glyph g) {
+        zones.get(zoneID).setBorder(g);
+    }
+
+    @Override
     public void clear() {
         mainZone.clear();
         for (Zone z : zones) z.clear();
@@ -138,7 +147,7 @@ public class DualityGUI implements Gui {
     public void redraw() {
         //todo: draw background as tiles
         mainZone.draw(fullScreen, bufferedImage);
-        for (Zone z : zones) {
+        for (Zone z : visibleZones) {
             z.draw(fullScreen, bufferedImage);
         }
         imagePane.setImage(bufferedImage);
