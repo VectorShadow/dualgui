@@ -1,7 +1,6 @@
 package core;
 
-import resources.Renderer;
-
+import resources.render.Renderer;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;

@@ -1,5 +1,9 @@
 package resources;
 
+import resources.glyph.GlyphStringProtocol;
+import resources.render.OutputMode;
+import resources.render.RenderContext;
+
 public enum DualityMode implements OutputMode {
     TEXT,
     TILE;

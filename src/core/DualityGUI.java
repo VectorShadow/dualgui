@@ -1,7 +1,10 @@
 package core;
 
 import contract.Gui;
+import contract.Zone;
 import resources.*;
+import resources.glyph.Glyph;
+import resources.render.OutputMode;
 
 import javax.swing.*;
 import java.awt.*;

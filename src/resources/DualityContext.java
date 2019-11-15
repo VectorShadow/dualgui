@@ -1,5 +1,9 @@
 package resources;
 
+import resources.render.OutputMode;
+import resources.render.RenderContext;
+import resources.render.Renderer;
+
 import java.awt.*;
 
 public class DualityContext extends RenderContext {
@@ -53,6 +57,15 @@ public class DualityContext extends RenderContext {
                 return DualityMode.TILE;
             case 2: case 3:
                 return DualityMode.TEXT;
+            default: throw new IllegalStateException("Unhandled DualityContext ID: " + ID);
+        }
+    }
+
+    @Override
+    public boolean isFullScreen() {
+        switch (ID) {
+            case 0: case 2: return true;
+            case 1: case 3: return false;
             default: throw new IllegalStateException("Unhandled DualityContext ID: " + ID);
         }
     }
