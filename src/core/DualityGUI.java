@@ -75,6 +75,7 @@ public class DualityGUI implements Gui {
     public void setFullScreen(boolean fs) {
         if (fullScreen == fs) return;
         fullScreen = fs;
+        close();
         deriveSizes();
     }
 
