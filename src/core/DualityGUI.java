@@ -160,13 +160,23 @@ public class DualityGUI implements Gui {
     }
 
     @Override
-    public Dimension getDimension() {
-        return mainZone.getDimension();
+    public int countRows() {
+        return mainZone.zoneRows();
     }
 
     @Override
-    public Dimension getDimension(int zone) {
-        return zones.get(zone).getDimension();
+    public int countColumns() {
+        return mainZone.zoneCols();
+    }
+
+    @Override
+    public int countRows(int zone) {
+        return zones.get(zone).zoneRows();
+    }
+
+    @Override
+    public int countColumns(int zone) {
+        return zones.get(zone).zoneCols();
     }
 
     private void initializeBufferedImage(){
