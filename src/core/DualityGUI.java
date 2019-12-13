@@ -158,6 +158,17 @@ public class DualityGUI implements Gui {
         imagePane.repaint();
         initializeBufferedImage();
     }
+
+    @Override
+    public Dimension getDimension() {
+        return mainZone.getDimension();
+    }
+
+    @Override
+    public Dimension getDimension(int zone) {
+        return zones.get(zone).getDimension();
+    }
+
     private void initializeBufferedImage(){
         bufferedImage = new BufferedImage(imagePane.getWidth(), imagePane.getHeight(), BufferedImage.TYPE_INT_ARGB);
     }
