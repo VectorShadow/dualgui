@@ -84,6 +84,11 @@ public class DualityGUI implements Gui {
     }
 
     @Override
+    public void toggleFullScreen() {
+        setFullScreen(!fullScreen);
+    }
+
+    @Override
     public int addZone(
             double verticalOriginPct,
             double verticalSizePct,
@@ -103,6 +108,7 @@ public class DualityGUI implements Gui {
 
     @Override
     public void removeZone(int zoneID) {
+        hideZone(zoneID); //ensure we remove from visibleZones as well!
         zones.remove(zoneID);
     }
 
