@@ -8,6 +8,7 @@ import resources.render.OutputMode;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -23,6 +24,8 @@ public class DualityGUI implements Gui {
     private JFrame frame;
     private ImagePane imagePane;
     private BufferedImage bufferedImage;
+
+    private KeyListener keyListener;
 
     public DualityGUI() {
         fullScreen = true;
@@ -57,6 +60,7 @@ public class DualityGUI implements Gui {
         frame.setUndecorated(fullScreen);
         frame.setVisible(true);
         frame.pack();
+        if (keyListener != null) frame.addKeyListener(keyListener);
         if (fullScreen) {
             frame.setExtendedState(Frame.MAXIMIZED_BOTH);
         } else {
@@ -115,6 +119,12 @@ public class DualityGUI implements Gui {
     @Override
     public void setBorder(int zoneID, Glyph g) {
         zones.get(zoneID).setBorder(g);
+    }
+
+    @Override
+    public void addKeyListener(KeyListener kl) {
+        keyListener = kl;
+        frame.addKeyListener(keyListener);
     }
 
     @Override
