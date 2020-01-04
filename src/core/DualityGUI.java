@@ -80,7 +80,7 @@ public class DualityGUI implements Gui {
     }
 
     @Override
-    public void addZone(
+    public int addZone(
             double verticalOriginPct,
             double verticalSizePct,
             double horizontalOriginPct,
@@ -89,6 +89,7 @@ public class DualityGUI implements Gui {
         Zone z = new Zone(verticalOriginPct, verticalSizePct, horizontalOriginPct, horizontalSizePct, om);
         zones.add(z);
         visibleZones.add(z);
+        return zones.size();
     }
 
     @Override
