@@ -4,6 +4,7 @@ import contract.Gui;
 import contract.Zone;
 import resources.*;
 import resources.glyph.Glyph;
+import resources.glyph.image.GlyphString;
 import resources.render.OutputMode;
 
 import javax.swing.*;
@@ -150,7 +151,7 @@ public class DualityGUI implements Gui {
     }
 
     @Override
-    public void print(int row, int col, ArrayList<Glyph> g) {
+    public void print(int row, int col, GlyphString gs) {
         throw new UnsupportedOperationException();
     }
 
@@ -160,8 +161,23 @@ public class DualityGUI implements Gui {
     }
 
     @Override
-    public void print(int zone, int row, int col, ArrayList<Glyph> g) {
-        zones.get(zone).print(row, col, g);
+    public void print(int zone, int row, int col, GlyphString gs) {
+        zones.get(zone).print(row, col, gs);
+    }
+
+    @Override
+    public void printCentered(int row, ArrayList<Glyph> g) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void printCentered(int zone, int row, GlyphString gs) {
+        Zone z = zones.get(zone);
+        int c = z.zoneCols();
+        int l = gs.size();
+        //don't print more than 1 line - cut the input short instead
+        if (l >= c - 2) print(zone, row, 1, gs.subGlyphString(0, c - 2));
+        else print(zone, row, c / 2 - l / 2, gs);
     }
 
     @Override
@@ -194,6 +210,31 @@ public class DualityGUI implements Gui {
     @Override
     public int countColumns(int zone) {
         return zones.get(zone).zoneCols();
+    }
+
+    private void checkPercent(double percent) {
+        if (percent < 0.0 || percent > 1.0) throw new IllegalArgumentException("Percent " + percent + " out of bounds.");
+    }
+    @Override
+    public int rowAtPercent(double percent) {
+        checkPercent(percent);
+        return (int)(percent * countRows());
+    }
+    @Override
+    public int colAtPercent(double percent) {
+        checkPercent(percent);
+        return (int)(percent * countColumns());
+    }
+
+    @Override
+    public int rowAtPercent(int zone, double percent) {
+        return (int)(percent * countRows(zone));
+    }
+
+    @Override
+    public int colAtPercent(int zone, double percent) {
+        checkPercent(percent);
+        return (int)(percent * countColumns(zone));
     }
 
     private void initializeBufferedImage(){
