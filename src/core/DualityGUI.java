@@ -2,6 +2,8 @@ package core;
 
 import contract.Gui;
 import contract.Zone;
+import contract.menu.Menu;
+import contract.menu.MenuOption;
 import resources.*;
 import resources.glyph.Glyph;
 import resources.glyph.image.GlyphString;
@@ -207,6 +209,30 @@ public class DualityGUI implements Gui {
     public void setTitle(String title) {
         frameTitle = title;
         frame.setTitle(frameTitle);
+    }
+
+    @Override
+    public void printMenu(int row, Menu menu, Color background, Color foreground) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void printMenu(int zone, int row, Menu menu, Color background, Color foreground) {
+        int r = row;
+        GlyphString title = new GlyphString(menu.getTitle(), background, foreground);
+        GlyphString optionName;
+        boolean selected;
+        printCentered(zone, r, title);
+        r += 2;
+        for (MenuOption menuOption : menu) {
+            selected = r - (row + 2) == menu.getSelectedOptionIndex();
+            optionName = new GlyphString(
+                    menuOption.getName(),
+                    selected ? foreground : background,
+                    selected ? background : foreground
+            );
+            printCentered(zone, r++, optionName);
+        }
     }
 
     @Override
