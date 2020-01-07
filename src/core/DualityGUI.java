@@ -218,6 +218,7 @@ public class DualityGUI implements Gui {
 
     @Override
     public void printMenu(int zone, int row, Menu menu, Color background, Color foreground) {
+        clear(zone);
         int r = row;
         GlyphString title = new GlyphString(menu.getTitle(), background, foreground);
         GlyphString optionName;
