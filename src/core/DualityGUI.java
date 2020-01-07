@@ -26,6 +26,9 @@ public class DualityGUI implements Gui {
     private ImagePane imagePane;
     private BufferedImage bufferedImage;
 
+    private String iconImagePath;
+    private String frameTitle;
+
     private KeyListener keyListener;
 
     public DualityGUI() {
@@ -67,6 +70,8 @@ public class DualityGUI implements Gui {
         } else {
             frame.setExtendedState(Frame.NORMAL);
             frame.setLocation(centeredOrigin());
+            frame.setIconImage(new ImageIcon(iconImagePath).getImage());
+            frame.setTitle(frameTitle);
         }
     }
 
@@ -190,6 +195,18 @@ public class DualityGUI implements Gui {
         imagePane.setImage(bufferedImage);
         imagePane.repaint();
         initializeBufferedImage();
+    }
+
+    @Override
+    public void setIcon(String pathToIconImage) {
+        iconImagePath = pathToIconImage;
+        frame.setIconImage(new ImageIcon(iconImagePath).getImage());
+    }
+
+    @Override
+    public void setTitle(String title) {
+        frameTitle = title;
+        frame.setTitle(frameTitle);
     }
 
     @Override
