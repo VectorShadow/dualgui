@@ -5,6 +5,7 @@ import contract.Zone;
 import contract.menu.Menu;
 import contract.menu.MenuOption;
 import resources.*;
+import resources.chroma.Chroma;
 import resources.glyph.Glyph;
 import resources.glyph.image.GlyphString;
 import resources.render.OutputMode;
@@ -230,7 +231,7 @@ public class DualityGUI implements Gui {
             optionName = new GlyphString(
                     menuOption.getName(),
                     selected ? foreground : background,
-                    selected ? background : foreground
+                    selected ? background : menuOption.isEnabled() ? foreground : Chroma.dark(foreground)
             );
             printCentered(zone, r++, optionName);
         }
