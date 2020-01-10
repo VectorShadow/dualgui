@@ -3,6 +3,7 @@ package core;
 import contract.Channel;
 import contract.Gui;
 import contract.Zone;
+import contract.input.InputDialog;
 import contract.menu.Menu;
 import contract.menu.MenuOption;
 import resources.*;
@@ -238,6 +239,26 @@ public class DualityGUI implements Gui {
             );
             printCentered(zone, r++, optionName);
         }
+    }
+
+    @Override
+    public void printDialog(int row, InputDialog dialog) {
+        if (channels.get(currentChannelIndex).mainOutputMode() != DualityMode.TEXT)
+            throw new UnsupportedOperationException();
+        clear();
+        int r = row;
+        printCentered(r, dialog.glyphStringTitle());
+        r += 2;
+        for (GlyphString field : dialog) printCentered(r++, field);
+    }
+
+    @Override
+    public void printDialog(int zone, int row, InputDialog dialog) {
+        clear(zone);
+        int r = row;
+        printCentered(zone, r, dialog.glyphStringTitle());
+        r += 2;
+        for (GlyphString field : dialog) printCentered(zone, r++, field);
     }
 
     @Override
