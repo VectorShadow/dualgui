@@ -1,5 +1,6 @@
 package core;
 
+import contract.Channel;
 import contract.Gui;
 import contract.Zone;
 import contract.menu.Menu;
@@ -20,10 +21,8 @@ public class DualityGUI implements Gui {
 
     private boolean fullScreen;
 
-    private Zone mainZone;
-
-    private ArrayList<Zone> zones;
-    private ArrayList<Zone> visibleZones;
+    private ArrayList<Channel> channels;
+    private int currentChannelIndex;
 
     private JFrame frame;
     private ImagePane imagePane;
@@ -36,15 +35,9 @@ public class DualityGUI implements Gui {
 
     public DualityGUI() {
         fullScreen = true;
-        mainZone = new Zone(
-                0.0,
-                1.0,
-                0.0,
-                1.0,
-                DualityMode.TILE
-        );
-        zones = new ArrayList<>();
-        visibleZones = new ArrayList<>();
+        channels = new ArrayList<>();
+        addChannel(DualityMode.TILE);
+        currentChannelIndex = 0;
         deriveSizes();
     }
 
@@ -98,42 +91,36 @@ public class DualityGUI implements Gui {
     }
 
     @Override
+    public int addChannel(OutputMode om) {
+        channels.add(new Channel(om));
+        return channels.size() - 1;
+    }
+
+    @Override
     public int addZone(
+            int channelID,
             double verticalOriginPct,
             double verticalSizePct,
             double horizontalOriginPct,
             double horizontalSizePct,
             OutputMode om) {
         Zone z = new Zone(verticalOriginPct, verticalSizePct, horizontalOriginPct, horizontalSizePct, om);
-        zones.add(z);
-        visibleZones.add(z);
-        return zones.size();
+        return channels.get(channelID).addZone(z);
     }
 
     @Override
-    public void hideZone(int zoneID) {
-        visibleZones.remove(zones.get(zoneID));
+    public void removeZone(int channelID, int zoneID) {
+        channels.get(channelID).removeZone(zoneID);
     }
 
     @Override
-    public void removeZone(int zoneID) {
-        hideZone(zoneID); //ensure we remove from visibleZones as well!
-        zones.remove(zoneID);
+    public void setBackground(int channelID, int zoneID, Glyph g) {
+        channels.get(channelID).setBackground(zoneID, g);
     }
 
     @Override
-    public void showZone(int zoneID) {
-        visibleZones.add(zones.get(zoneID));
-    }
-
-    @Override
-    public void setBackground(int zoneID, Glyph g) {
-        zones.get(zoneID).setBackground(g);
-    }
-
-    @Override
-    public void setBorder(int zoneID, Glyph g) {
-        zones.get(zoneID).setBorder(g);
+    public void setBorder(int channelID, int zoneID, Glyph g) {
+        channels.get(channelID).setBorder(zoneID, g);
     }
 
     @Override
@@ -143,58 +130,57 @@ public class DualityGUI implements Gui {
     }
 
     @Override
+    public void changeChannel(int newChannelID) {
+        currentChannelIndex = newChannelID;
+    }
+
+    @Override
     public void clear() {
-        mainZone.clear();
-        for (Zone z : zones) z.clear();
+        channels.get(currentChannelIndex).clear();
     }
 
     @Override
     public void clear(int zone) {
-        zones.get(zone).clear();
+        channels.get(currentChannelIndex).clear(zone);
     }
 
     @Override
     public void print(int row, int col, Glyph g) {
-        mainZone.print(row, col, g);
+        channels.get(currentChannelIndex).print(row, col, g);
     }
 
     @Override
     public void print(int row, int col, GlyphString gs) {
-        throw new UnsupportedOperationException();
+        if (channels.get(currentChannelIndex).mainOutputMode() != DualityMode.TEXT)
+            throw new UnsupportedOperationException();
+        channels.get(currentChannelIndex).print(row, col, gs);
     }
 
     @Override
     public void print(int zone, int row, int col, Glyph g) {
-        zones.get(zone).print(row, col, g);
+        channels.get(currentChannelIndex).print(zone, row, col, g);
     }
 
     @Override
     public void print(int zone, int row, int col, GlyphString gs) {
-        zones.get(zone).print(row, col, gs);
+        channels.get(currentChannelIndex).print(zone, row, col, gs);
     }
 
     @Override
-    public void printCentered(int row, ArrayList<Glyph> g) {
-        throw new UnsupportedOperationException();
+    public void printCentered(int row, GlyphString gs) {
+        if (channels.get(currentChannelIndex).mainOutputMode() != DualityMode.TEXT)
+            throw new UnsupportedOperationException();
+        channels.get(currentChannelIndex).printCentered(row, gs);
     }
 
     @Override
     public void printCentered(int zone, int row, GlyphString gs) {
-        Zone z = zones.get(zone);
-        int c = z.zoneCols();
-        int l = gs.size();
-        //don't print more than 1 line - cut the input short instead
-        if (l >= c - 2) print(zone, row, 1, gs.subGlyphString(0, c - 2));
-        else print(zone, row, c / 2 - l / 2, gs);
+        channels.get(currentChannelIndex).print(zone, row, gs);
     }
 
     @Override
     public void redraw() {
-        //todo: draw background as tiles
-        mainZone.draw(fullScreen, true, bufferedImage);
-        for (Zone z : visibleZones) {
-            z.draw(fullScreen, false, bufferedImage);
-        }
+        channels.get(currentChannelIndex).draw(fullScreen, bufferedImage);
         imagePane.setImage(bufferedImage);
         imagePane.repaint();
         initializeBufferedImage();
@@ -214,7 +200,24 @@ public class DualityGUI implements Gui {
 
     @Override
     public void printMenu(int row, Menu menu, Color background, Color foreground) {
-        throw new UnsupportedOperationException();
+        if (channels.get(currentChannelIndex).mainOutputMode() != DualityMode.TEXT)
+            throw new UnsupportedOperationException();
+        clear();
+        int r = row;
+        GlyphString title = new GlyphString(menu.getTitle(), background, foreground);
+        GlyphString optionName;
+        boolean selected;
+        printCentered( r, title);
+        r += 2;
+        for (MenuOption menuOption : menu) {
+            selected = r - (row + 2) == menu.getSelectedOptionIndex();
+            optionName = new GlyphString(
+                    menuOption.getName(),
+                    selected ? foreground : background,
+                    selected ? background : menuOption.isEnabled() ? foreground : Chroma.dark(foreground)
+            );
+            printCentered(r++, optionName);
+        }
     }
 
     @Override
@@ -239,47 +242,41 @@ public class DualityGUI implements Gui {
 
     @Override
     public int countRows() {
-        return mainZone.zoneRows();
+        return channels.get(currentChannelIndex).countRows();
     }
 
     @Override
     public int countColumns() {
-        return mainZone.zoneCols();
+        return channels.get(currentChannelIndex).countColumns();
     }
 
     @Override
     public int countRows(int zone) {
-        return zones.get(zone).zoneRows();
+        return channels.get(currentChannelIndex).countRows(zone);
     }
 
     @Override
     public int countColumns(int zone) {
-        return zones.get(zone).zoneCols();
+        return channels.get(currentChannelIndex).countColumns(zone);
     }
 
-    private void checkPercent(double percent) {
-        if (percent < 0.0 || percent > 1.0) throw new IllegalArgumentException("Percent " + percent + " out of bounds.");
-    }
     @Override
     public int rowAtPercent(double percent) {
-        checkPercent(percent);
-        return (int)(percent * countRows());
+        return channels.get(currentChannelIndex).rowAtPercent(percent);
     }
     @Override
     public int colAtPercent(double percent) {
-        checkPercent(percent);
-        return (int)(percent * countColumns());
+        return channels.get(currentChannelIndex).colAtPercent(percent);
     }
 
     @Override
     public int rowAtPercent(int zone, double percent) {
-        return (int)(percent * countRows(zone));
+        return channels.get(currentChannelIndex).rowAtPercent(zone, percent);
     }
 
     @Override
     public int colAtPercent(int zone, double percent) {
-        checkPercent(percent);
-        return (int)(percent * countColumns(zone));
+        return channels.get(currentChannelIndex).colAtPercent(zone, percent);
     }
 
     private void initializeBufferedImage(){
