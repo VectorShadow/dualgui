@@ -242,23 +242,23 @@ public class DualityGUI implements Gui {
     }
 
     @Override
-    public void printDialog(int row, InputDialog dialog) {
+    public void printDialog(InputDialog dialog) {
         if (channels.get(currentChannelIndex).mainOutputMode() != DualityMode.TEXT)
             throw new UnsupportedOperationException();
         clear();
-        int r = row;
-        printCentered(r, dialog.glyphStringTitle());
-        r += 2;
-        for (GlyphString field : dialog) printCentered(r++, field);
+        int row = rowAtPercent(dialog.getRowStartPercent());
+        printCentered(row, dialog.glyphStringTitle());
+        row += 2;
+        for (GlyphString field : dialog) printCentered(row++, field);
     }
 
     @Override
-    public void printDialog(int zone, int row, InputDialog dialog) {
+    public void printDialog(int zone, InputDialog dialog) {
         clear(zone);
-        int r = row;
-        printCentered(zone, r, dialog.glyphStringTitle());
-        r += 2;
-        for (GlyphString field : dialog) printCentered(zone, r++, field);
+        int row = rowAtPercent(zone, dialog.getRowStartPercent());
+        printCentered(zone, row, dialog.glyphStringTitle());
+        row += 2;
+        for (GlyphString field : dialog) printCentered(zone, row++, field);
     }
 
     @Override
