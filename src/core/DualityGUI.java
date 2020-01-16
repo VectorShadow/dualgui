@@ -214,8 +214,8 @@ public class DualityGUI implements Gui {
             selected = r - (row + 2) == menu.getSelectedOptionIndex();
             optionName = new GlyphString(
                     menuOption.getName(),
-                    selected ? foreground : background,
-                    selected ? background : menuOption.isEnabled() ? foreground : Chroma.dark(foreground)
+                    background,
+                    selected ? foreground : menuOption.isEnabled() ? Chroma.dim(foreground) : Chroma.dark(foreground)
             );
             printCentered(r++, optionName);
         }
