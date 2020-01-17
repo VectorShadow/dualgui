@@ -199,6 +199,30 @@ public class DualityGUI implements Gui {
         frame.setTitle(frameTitle);
     }
 
+    private String printHotkey(int optionIndex) {
+        String optionPreface = "(";
+        char hotkeySymbol;
+        switch (optionIndex) {
+            case 0: hotkeySymbol = '1'; break;
+            case 1: hotkeySymbol = '2'; break;
+            case 2: hotkeySymbol = '3'; break;
+            case 3: hotkeySymbol = '4'; break;
+            case 4: hotkeySymbol = '5'; break;
+            case 5: hotkeySymbol = '6'; break;
+            case 6: hotkeySymbol = '7'; break;
+            case 7: hotkeySymbol = '8'; break;
+            case 8: hotkeySymbol = '9'; break;
+            case 9: hotkeySymbol = 'a'; break;
+            case 10: hotkeySymbol = 'b'; break;
+            case 11: hotkeySymbol = 'c'; break;
+            case 12: hotkeySymbol = 'd'; break;
+            case 13: hotkeySymbol = 'e'; break;
+            case 14: hotkeySymbol = 'f'; break;
+            default: hotkeySymbol = ' ';
+        }
+        return optionPreface + hotkeySymbol + ")";
+    }
+
     @Override
     public void printMenu(int row, Menu menu, Color background, Color foreground) {
         if (channels.get(currentChannelIndex).mainOutputMode() != DualityMode.TEXT)
@@ -210,10 +234,12 @@ public class DualityGUI implements Gui {
         boolean selected;
         printCentered( r, title);
         r += 2;
+        int index;
         for (MenuOption menuOption : menu) {
-            selected = r - (row + 2) == menu.getSelectedOptionIndex();
+            index = r - (row + 2);
+            selected = index == menu.getSelectedOptionIndex();
             optionName = new GlyphString(
-                    menuOption.getName(),
+                    printHotkey(index) + menuOption.getName(),
                     background,
                     selected ? foreground : menuOption.isEnabled() ? Chroma.dim(foreground) : Chroma.dark(foreground)
             );
@@ -230,10 +256,12 @@ public class DualityGUI implements Gui {
         boolean selected;
         printCentered(zone, r, title);
         r += 2;
+        int index;
         for (MenuOption menuOption : menu) {
-            selected = r - (row + 2) == menu.getSelectedOptionIndex();
+            index = r - (row + 2);
+            selected = index == menu.getSelectedOptionIndex();
             optionName = new GlyphString(
-                    menuOption.getName(),
+                    printHotkey(index) + menuOption.getName(),
                     selected ? foreground : background,
                     selected ? background : menuOption.isEnabled() ? foreground : Chroma.dark(foreground)
             );
