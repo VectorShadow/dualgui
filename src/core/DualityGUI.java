@@ -60,6 +60,7 @@ public class DualityGUI implements Gui {
         frame.setContentPane(imagePane);
         frame.setUndecorated(fullScreen);
         frame.setVisible(true);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.pack();
         if (keyListener != null) frame.addKeyListener(keyListener);
         if (fullScreen) {
@@ -151,10 +152,10 @@ public class DualityGUI implements Gui {
     }
 
     @Override
-    public void print(int row, int col, GlyphString gs) {
+    public Point print(int row, int col, GlyphString gs) {
         if (channels.get(currentChannelIndex).mainOutputMode() != DualityMode.TEXT)
             throw new UnsupportedOperationException();
-        channels.get(currentChannelIndex).print(row, col, gs);
+        return channels.get(currentChannelIndex).print(row, col, gs);
     }
 
     @Override
@@ -163,8 +164,8 @@ public class DualityGUI implements Gui {
     }
 
     @Override
-    public void print(int zone, int row, int col, GlyphString gs) {
-        channels.get(currentChannelIndex).print(zone, row, col, gs);
+    public Point print(int zone, int row, int col, GlyphString gs) {
+        return channels.get(currentChannelIndex).print(zone, row, col, gs);
     }
 
     @Override

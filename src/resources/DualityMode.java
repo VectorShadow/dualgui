@@ -5,13 +5,14 @@ import resources.render.OutputMode;
 import resources.render.RenderContext;
 
 public enum DualityMode implements OutputMode {
+    MESSAGES,
     TEXT,
     TILE;
 
     @Override
     public RenderContext generateContext(boolean fullScreen) {
         switch (this) {
-            case TEXT:
+            case MESSAGES: case TEXT:
                 return fullScreen ? DualityContext.TEXT_FULLSCREEN : DualityContext.TEXT_WINDOWED;
             case TILE:
                 return fullScreen ? DualityContext.TILE_FULLSCREEN : DualityContext.TILE_WINDOWED;
@@ -22,6 +23,8 @@ public enum DualityMode implements OutputMode {
     @Override
     public GlyphStringProtocol getGlyphStringProtocol() {
         switch (this) {
+            case MESSAGES:
+                return new GlyphStringProtocol(1, 1_024, 32, 4);
             case TEXT:
                 return new GlyphStringProtocol(1, 127, 2, 4);
             case TILE:
