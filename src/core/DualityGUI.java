@@ -15,6 +15,8 @@ import resources.render.OutputMode;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -33,6 +35,7 @@ public class DualityGUI implements Gui {
     private String frameTitle;
 
     private KeyListener keyListener;
+    private WindowListener windowListener;
 
     public DualityGUI() {
         fullScreen = true;
@@ -63,6 +66,7 @@ public class DualityGUI implements Gui {
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.pack();
         if (keyListener != null) frame.addKeyListener(keyListener);
+        if (windowListener != null) frame.addWindowListener(windowListener);
         if (fullScreen) {
             frame.setExtendedState(Frame.MAXIMIZED_BOTH);
         } else {
@@ -132,6 +136,17 @@ public class DualityGUI implements Gui {
     }
 
     @Override
+    public void addWindowListener(WindowListener wl) {
+        windowListener = wl;
+        frame.addWindowListener(windowListener);
+    }
+
+    @Override
+    public int activeChannel() {
+        return currentChannelIndex;
+    }
+
+    @Override
     public void changeChannel(int newChannelID) {
         currentChannelIndex = newChannelID;
     }
@@ -153,7 +168,7 @@ public class DualityGUI implements Gui {
 
     @Override
     public Point print(int row, int col, GlyphString gs) {
-        if (channels.get(currentChannelIndex).mainOutputMode() != DualityMode.TEXT)
+        if (channels.get(currentChannelIndex).mainOutputMode() == DualityMode.TILE)
             throw new UnsupportedOperationException();
         return channels.get(currentChannelIndex).print(row, col, gs);
     }
@@ -170,7 +185,7 @@ public class DualityGUI implements Gui {
 
     @Override
     public void printCentered(int row, GlyphString gs) {
-        if (channels.get(currentChannelIndex).mainOutputMode() != DualityMode.TEXT)
+        if (channels.get(currentChannelIndex).mainOutputMode() == DualityMode.TILE)
             throw new UnsupportedOperationException();
         channels.get(currentChannelIndex).printCentered(row, gs);
     }
@@ -226,7 +241,7 @@ public class DualityGUI implements Gui {
 
     @Override
     public void printMenu(int row, Menu menu, Color background, Color foreground) {
-        if (channels.get(currentChannelIndex).mainOutputMode() != DualityMode.TEXT)
+        if (channels.get(currentChannelIndex).mainOutputMode() == DualityMode.TILE)
             throw new UnsupportedOperationException();
         clear();
         int r = row;
@@ -272,7 +287,7 @@ public class DualityGUI implements Gui {
 
     @Override
     public void printDialog(InputDialog dialog) {
-        if (channels.get(currentChannelIndex).mainOutputMode() != DualityMode.TEXT)
+        if (channels.get(currentChannelIndex).mainOutputMode() != DualityMode.SHORT_TEXT)
             throw new UnsupportedOperationException();
         clear();
         int row = rowAtPercent(dialog.getRowStartPercent());

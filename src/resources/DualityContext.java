@@ -56,7 +56,7 @@ public class DualityContext extends RenderContext {
             case 0: case 1:
                 return DualityMode.TILE;
             case 2: case 3:
-                return DualityMode.TEXT;
+                return DualityMode.SHORT_TEXT;
             default: throw new IllegalStateException("Unhandled DualityContext ID: " + ID);
         }
     }
