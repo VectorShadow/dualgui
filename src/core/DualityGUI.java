@@ -121,8 +121,18 @@ public class DualityGUI implements Gui {
     }
 
     @Override
+    public void setBackground(int channelID, Glyph g) {
+        channels.get(channelID).setBackground(g);
+    }
+
+    @Override
     public void setBackground(int channelID, int zoneID, Glyph g) {
         channels.get(channelID).setBackground(zoneID, g);
+    }
+
+    @Override
+    public void setBorder(int channelID, Glyph g) {
+        channels.get(channelID).setBorder(g);
     }
 
     @Override
@@ -343,6 +353,16 @@ public class DualityGUI implements Gui {
     @Override
     public int colAtPercent(int zone, double percent) {
         return channels.get(currentChannelIndex).colAtPercent(zone, percent);
+    }
+
+    @Override
+    public int countChannels() {
+        return channels.size();
+    }
+
+    @Override
+    public int countZones(int channelId) {
+        return channels.get(channelId).countZones();
     }
 
     private void initializeBufferedImage(){
