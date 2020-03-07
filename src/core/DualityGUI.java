@@ -8,6 +8,7 @@ import contract.menu.Menu;
 import contract.menu.MenuOption;
 import resources.*;
 import resources.chroma.Chroma;
+import resources.chroma.ChromaSet;
 import resources.glyph.Glyph;
 import resources.glyph.image.GlyphString;
 import resources.render.OutputMode;
@@ -240,12 +241,12 @@ public class DualityGUI implements Gui {
     }
 
     @Override
-    public void printMenu(int row, Menu menu, Color background, Color foreground) {
+    public void printMenu(int row, Menu menu, ChromaSet cs) {
         if (channels.get(currentChannelIndex).mainOutputMode() == DualityMode.TILE)
             throw new UnsupportedOperationException();
         clear();
         int r = row;
-        GlyphString title = new GlyphString(menu.getTitle(), background, foreground);
+        GlyphString title = new GlyphString(menu.getTitle(), cs.getBackground(), cs.getForeground());
         GlyphString optionName;
         boolean selected;
         printCentered( r, title);
@@ -256,18 +257,18 @@ public class DualityGUI implements Gui {
             selected = index == menu.getSelectedOptionIndex();
             optionName = new GlyphString(
                     printHotkey(index) + menuOption.getName(),
-                    background,
-                    selected ? foreground : menuOption.isEnabled() ? Chroma.dim(foreground) : Chroma.dark(foreground)
+                    cs.getBackground(),
+                    selected ? cs.getHighlight() : menuOption.isEnabled() ? cs.getForeground() : cs.subdueForeground()
             );
             printCentered(r++, optionName);
         }
     }
 
     @Override
-    public void printMenu(int zone, int row, Menu menu, Color background, Color foreground) {
+    public void printMenu(int zone, int row, Menu menu, ChromaSet cs) {
         clear(zone);
         int r = row;
-        GlyphString title = new GlyphString(menu.getTitle(), background, foreground);
+        GlyphString title = new GlyphString(menu.getTitle(), cs.getBackground(), cs.getForeground());
         GlyphString optionName;
         boolean selected;
         printCentered(zone, r, title);
@@ -278,8 +279,8 @@ public class DualityGUI implements Gui {
             selected = index == menu.getSelectedOptionIndex();
             optionName = new GlyphString(
                     printHotkey(index) + menuOption.getName(),
-                    selected ? foreground : background,
-                    selected ? background : menuOption.isEnabled() ? foreground : Chroma.dark(foreground)
+                    selected ? cs.getHighlight() : cs.getForeground(),
+                    selected ? cs.getBackground() : menuOption.isEnabled() ? cs.getForeground() : cs.subdueForeground()
             );
             printCentered(zone, r++, optionName);
         }
