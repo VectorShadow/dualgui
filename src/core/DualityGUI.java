@@ -7,16 +7,14 @@ import contract.input.InputDialog;
 import contract.menu.Menu;
 import contract.menu.MenuOption;
 import resources.*;
-import resources.chroma.Chroma;
 import resources.chroma.ChromaSet;
 import resources.glyph.Glyph;
-import resources.glyph.image.GlyphString;
+import resources.glyph.GlyphString;
 import resources.render.OutputMode;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyListener;
-import java.awt.event.WindowAdapter;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -363,6 +361,45 @@ public class DualityGUI implements Gui {
     @Override
     public int countZones(int channelId) {
         return channels.get(channelId).countZones();
+    }
+
+    @Override
+    public int maxCol() {
+        return channels.get(currentChannelIndex).maxCol();
+    }
+
+    @Override
+    public int minCol() {
+        return channels.get(currentChannelIndex).minCol();
+    }
+
+    @Override
+    public int maxRow() {
+        return channels.get(currentChannelIndex).maxRow();
+    }
+
+    @Override
+    public int minRow() {
+        return channels.get(currentChannelIndex).minRow();
+    }
+    @Override
+    public int maxCol(int zoneID) {
+        return channels.get(currentChannelIndex).maxCol(zoneID);
+    }
+
+    @Override
+    public int minCol(int zoneID) {
+        return channels.get(currentChannelIndex).minCol(zoneID);
+    }
+
+    @Override
+    public int maxRow(int zoneID) {
+        return channels.get(currentChannelIndex).maxRow(zoneID);
+    }
+
+    @Override
+    public int minRow(int zoneID) {
+        return channels.get(currentChannelIndex).minRow(zoneID);
     }
 
     private void initializeBufferedImage(){
