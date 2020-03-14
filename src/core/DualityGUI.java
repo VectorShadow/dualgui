@@ -402,6 +402,11 @@ public class DualityGUI implements Gui {
         return channels.get(currentChannelIndex).minRow(zoneID);
     }
 
+    @Override
+    public int from(int channelID, int zoneID, boolean row, boolean before) {
+        return channels.get(channelID).from(zoneID, row, before);
+    }
+
     private void initializeBufferedImage(){
         bufferedImage = new BufferedImage(imagePane.getWidth(), imagePane.getHeight(), BufferedImage.TYPE_INT_ARGB);
     }
