@@ -11,6 +11,7 @@ import resources.chroma.ChromaSet;
 import resources.glyph.Glyph;
 import resources.glyph.GlyphString;
 import resources.render.OutputMode;
+import resources.render.Renderer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,78 +22,84 @@ import java.util.ArrayList;
 
 public class DualityGUI implements Gui {
 
-    private boolean fullScreen;
+    //Remember the size of the frame and pane. On startup, default to half the size of the monitor.
+    private static Dimension lastWindowSize = getDefaultWindowSize();
+
+    private boolean fullScreenMode;
 
     private ArrayList<Channel> channels;
     private int currentChannelIndex;
 
-    private JFrame frame;
-    private ImagePane imagePane;
-    private BufferedImage bufferedImage;
+    private Canvas canvas;
+    private OutputWindow outputWindow;
 
-    private String iconImagePath;
-    private String frameTitle;
-
-    private KeyListener keyListener;
-    private WindowListener windowListener;
+    private boolean isRedrawing = false;
 
     public DualityGUI() {
-        fullScreen = true;
+        fullScreenMode = true;
         channels = new ArrayList<>();
         addChannel(DualityMode.TILE);
         currentChannelIndex = 0;
-        deriveSizes();
+        Dimension d = Renderer.countPixels();
+        canvas = new Canvas(d.height, d.width, 0);
+        generateWindow();
     }
 
-    public boolean isFullScreen() {
-        return fullScreen;
+    public static Dimension getMonitorDimension() {
+        DisplayMode dm = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode();
+        return new Dimension(dm.getWidth(), dm.getHeight());
     }
-    private Point centeredOrigin() {
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        return new Point(
-                ((int)(screenSize.getWidth() - frame.getWidth())) / 2,
-                ((int)(screenSize.getHeight() - frame.getHeight())) / 2
-                );
+
+    public static Dimension getLastWindowSize() {
+        return lastWindowSize;
     }
-    public void deriveSizes() {
-        frame = new JFrame();
-        imagePane = new ImagePane(fullScreen);
-        initializeBufferedImage();
-        imagePane.setImage(bufferedImage);
-        frame.setContentPane(imagePane);
-        frame.setUndecorated(fullScreen);
-        frame.setVisible(true);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.pack();
-        if (keyListener != null) frame.addKeyListener(keyListener);
-        if (windowListener != null) frame.addWindowListener(windowListener);
-        if (fullScreen) {
-            frame.setExtendedState(Frame.MAXIMIZED_BOTH);
-        } else {
-            frame.setExtendedState(Frame.NORMAL);
-            frame.setLocation(centeredOrigin());
-            frame.setIconImage(new ImageIcon(iconImagePath).getImage());
-            frame.setTitle(frameTitle);
+
+    private static Dimension getDefaultWindowSize() {
+        return new Dimension(
+                (int)(getMonitorDimension().width / Math.sqrt(2.0)),
+                (int)(getMonitorDimension().height / Math.sqrt(2.0))
+        );
+    }
+
+    private void requireCanvas() {
+        if (canvas == null)
+            throw new IllegalStateException("Size undefined - use .setSize() first");
+    }
+
+    private void requireWindow() {
+        if (outputWindow == null)
+            throw new IllegalStateException("OutputWindow not found - use .generateWindow() first");
+    }
+
+    /**
+     * Clean up the old output window if extant, then generate a new one based on the current fullscreen mode.
+     */
+    void generateWindow() {
+        if (outputWindow != null) {
+            if (fullScreenMode)
+                lastWindowSize = outputWindow.getSize(); //remember the current windowed mode size
+            outputWindow.dispose();
         }
+        outputWindow = new OutputWindow(fullScreenMode);
     }
 
     @Override
     public void close() {
-        //todo - other cleanup here
-        frame.dispose();
+        //todo - other cleanup here?
+        outputWindow.dispose();
     }
 
     @Override
-    public void setFullScreen(boolean fs) {
-        if (fullScreen == fs) return;
-        fullScreen = fs;
-        close();
-        deriveSizes();
+    public void setFullScreenMode(boolean fs) {
+        if (fullScreenMode == fs) return;
+        fullScreenMode = fs;
+        generateWindow();
+        redraw();
     }
 
     @Override
     public void toggleFullScreen() {
-        setFullScreen(!fullScreen);
+        setFullScreenMode(!fullScreenMode);
     }
 
     @Override
@@ -140,14 +147,14 @@ public class DualityGUI implements Gui {
 
     @Override
     public void addKeyListener(KeyListener kl) {
-        keyListener = kl;
-        frame.addKeyListener(keyListener);
+        requireWindow();
+        outputWindow.addKeyListener(kl);
     }
 
     @Override
     public void addWindowListener(WindowListener wl) {
-        windowListener = wl;
-        frame.addWindowListener(windowListener);
+        requireWindow();
+        outputWindow.addWindowListener(wl);
     }
 
     @Override
@@ -206,22 +213,24 @@ public class DualityGUI implements Gui {
 
     @Override
     public void redraw() {
-        channels.get(currentChannelIndex).draw(fullScreen, bufferedImage);
-        imagePane.setImage(bufferedImage);
-        imagePane.repaint();
-        initializeBufferedImage();
+        if (isRedrawing) return; //semaphore
+        isRedrawing = true;
+        requireCanvas();
+        requireWindow();
+        canvas.clear();
+        channels.get(currentChannelIndex).draw(true, canvas.getImage());
+        outputWindow.refresh(canvas.getImage());
+        isRedrawing = false;
     }
 
     @Override
     public void setIcon(String pathToIconImage) {
-        iconImagePath = pathToIconImage;
-        frame.setIconImage(new ImageIcon(iconImagePath).getImage());
+        outputWindow.setIconImage(new ImageIcon(pathToIconImage).getImage());
     }
 
     @Override
     public void setTitle(String title) {
-        frameTitle = title;
-        frame.setTitle(frameTitle);
+        outputWindow.setTitle(title);
     }
 
     public static String printMenuHotkey(int optionIndex) {
@@ -405,9 +414,5 @@ public class DualityGUI implements Gui {
     @Override
     public int from(int channelID, int zoneID, boolean row, boolean before) {
         return channels.get(channelID).from(zoneID, row, before);
-    }
-
-    private void initializeBufferedImage(){
-        bufferedImage = new BufferedImage(imagePane.getWidth(), imagePane.getHeight(), BufferedImage.TYPE_INT_ARGB);
     }
 }
