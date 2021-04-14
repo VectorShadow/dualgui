@@ -193,15 +193,15 @@ public class DualityGUI implements Gui {
     }
 
     @Override
-    public void printCentered(int row, GlyphString gs) {
+    public Point printCentered(int row, GlyphString gs) {
         if (channels.get(currentChannelIndex).mainOutputMode() == DualityMode.TILE)
             throw new UnsupportedOperationException();
-        channels.get(currentChannelIndex).printCentered(row, gs);
+        return channels.get(currentChannelIndex).printCentered(row, gs);
     }
 
     @Override
-    public void printCentered(int zone, int row, GlyphString gs) {
-        channels.get(currentChannelIndex).print(zone, row, gs);
+    public Point printCentered(int zone, int row, GlyphString gs) {
+        return channels.get(currentChannelIndex).print(zone, row, gs);
     }
 
     @Override
@@ -224,7 +224,7 @@ public class DualityGUI implements Gui {
         frame.setTitle(frameTitle);
     }
 
-    private String printHotkey(int optionIndex) {
+    public static String printMenuHotkey(int optionIndex) {
         String optionPreface = "(";
         char hotkeySymbol;
         switch (optionIndex) {
@@ -264,7 +264,7 @@ public class DualityGUI implements Gui {
             index = r - (row + 2);
             selected = index == menu.getSelectedOptionIndex();
             optionName = new GlyphString(
-                    printHotkey(index) + menuOption.getName(),
+                    printMenuHotkey(index) + menuOption.getName(),
                     cs.getBackground(),
                     selected ? cs.getHighlight() : menuOption.isEnabled() ? cs.getForeground() : cs.subdueForeground()
             );
@@ -286,7 +286,7 @@ public class DualityGUI implements Gui {
             index = r - (row + 2);
             selected = index == menu.getSelectedOptionIndex();
             optionName = new GlyphString(
-                    printHotkey(index) + menuOption.getName(),
+                    printMenuHotkey(index) + menuOption.getName(),
                     selected ? cs.getHighlight() : cs.getForeground(),
                     selected ? cs.getBackground() : menuOption.isEnabled() ? cs.getForeground() : cs.subdueForeground()
             );
